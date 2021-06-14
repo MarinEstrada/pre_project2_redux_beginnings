@@ -1,11 +1,12 @@
-function createStore () {
+// Library code
+function createStore (reducer) {
     // in charge of the store, which is composed of...4 things
     // 1. the state
     // 2. API / way to get the state
     // 3. way to listen for changes on the state
     // 4. way to Updaate the state
 
-    //in charge of holding the whole state
+    //state = in charge of holding the whole state
     let state
     let listeners = []
 
@@ -22,11 +23,28 @@ function createStore () {
         }
     }
 
+    // responsible for updating the state in the actual store
+    const dispatch = (action) => {
+        state = reducer(state, action)
+        listeners.forEach((listener) => listener())
+    }
+
     //whenever createStore is envoked, they will get an object 
     //in order to access the internal state of the store
     return {
         getState,
         subscribe,
+        dispatch,
     }
 
+}
+
+// App code
+// edit state by adding action
+// this is a reducer funciton
+// reduces request into a brand new state (must be a pure function)
+function todos(state = [], action) {
+    return action.type === 'ADD_TODO'
+        ? state.concat([action.todo])
+        : state
 }
