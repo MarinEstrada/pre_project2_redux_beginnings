@@ -1,3 +1,13 @@
+// edit state by adding action
+// this is a reducer funciton
+// reduces request into a brand new state (must be a pure function)
+function todos(state = [], action) {
+    return action.type === 'ADD_TODO'
+        ? state.concat([action.todo])
+        : state
+}
+
+
 function createStore () {
     // in charge of the store, which is composed of...4 things
     // 1. the state
@@ -5,7 +15,7 @@ function createStore () {
     // 3. way to listen for changes on the state
     // 4. way to Updaate the state
 
-    //in charge of holding the whole state
+    //state = in charge of holding the whole state
     let state
     let listeners = []
 
