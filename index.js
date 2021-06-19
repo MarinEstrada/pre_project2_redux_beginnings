@@ -57,3 +57,27 @@ function todos(state = [], action) {
             return state
     }
 }
+
+//goals reducer
+function goals (state = [], action) {
+    switch(action.type) {
+        case 'ADD_GOAL':
+            return state.concat([action.goal])
+        case 'REMOVE_GOAL':
+            return state.filter((goal) => goal.id !== action.id)
+        default:
+            return state
+    }
+}
+
+// create function that calls each individual reducer for the createStore function
+function app (state = {}, action) {
+    return {
+        //prepare todos
+        todos: todos(state.todos, action),
+        //prepare goals portion of the state
+        goals: goals(state.goals, action),
+    }
+}
+
+
