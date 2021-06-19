@@ -29,7 +29,7 @@ function createStore (reducer) {
         listeners.forEach((listener) => listener())
     }
 
-    //whenever createStore is envoked, they will get an object 
+    //whenever createStore is envoked, they will get an object
     //in order to access the internal state of the store
     return {
         getState,
@@ -126,7 +126,14 @@ function app (state = {}, action) {
 }
 
 // adding starting dispatch code
-store.distpatch(addTodoAction({
+
+const store = createStore(app)
+
+store.subscribe(() => {
+    console.log('The new state is: ', store.getState())
+})
+
+store.dispatch(addTodoAction({
     id: 0,
     name: 'Walk the dog',
     complete: false,
