@@ -58,6 +58,7 @@ function todos(state = [], action) {
     }
 }
 
+//goals reducer
 function goals (state = [], action) {
     switch(action.type) {
         case 'ADD_GOAL':
@@ -68,3 +69,15 @@ function goals (state = [], action) {
             return state
     }
 }
+
+// create function that calls each individual reducer for the createStore function
+function app (state = {}, action) {
+    return {
+        //prepare todos
+        todos: todos(state.todos, action),
+        //prepare goals portion of the state
+        goals: goals(state.goals, action),
+    }
+}
+
+
