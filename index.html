@@ -159,7 +159,17 @@
             const store = createStore(app)
 
             store.subscribe(() => {
-                console.log('The new state is: ', store.getState())
+                // get goals and todos from state
+                const {goals, todos} = store.getState()
+
+                //reset both unordered lists in the DOM before re-adding them to DOM bellow
+                document.getElementById('goals').innerHTML = ''
+                document.getElementById('todos').innerHTML = ''
+
+                //print to ui by adding each goal/todo to DOM
+                //use addTodoToDom & addGoalToDom functions defined bellow
+                goals.forEach(addGoalToDOM)
+                todos.forEach(addTodoToDOM)
             })
 /*
             store.dispatch(addTodoAction({
@@ -196,6 +206,7 @@
 
             store.dispatch(removeGoalAction(0))
 */
+            // DOM Code
             //adding functions to add user input to the state
             function addTodo(){
                 //first grab value of input field
@@ -229,6 +240,32 @@
                 .addEventListener('click', addTodo)
             document.getElementById('goalBtn')
                 .addEventListener('click', addGoal)
+
+
+            //dom functions take a todo/goal and add to DOM
+            //this way it appears in the UI
+            function addTodoToDOM(todo){
+                //create new node, a list item
+                const node = document.createElement('li')
+                // create new text node, passing in the name in the todo
+                const text = document.createTextNode(todo.name)
+                // append ne textnode to new node
+                node.appendChild(text)
+
+                //get unordered list, append the new node to it
+                document.getElementById('todos')
+                    .appendChild(node)
+            }
+
+            function addGoalToDOM(goal){
+                const node = document.createElement('li')
+                const text = document.createTextNode(goal.name)
+                node.appendChild(text)
+
+                document.getElementById('goals')
+                    .appendChild(node)
+            }
+
 
         </script>
 
