@@ -251,6 +251,14 @@
                 const text = document.createTextNode(todo.name)
                 // append ne textnode to new node
                 node.appendChild(text)
+                //add stye decoration, if complete add strikethrough
+                node.style.textDecoration = todo.complete
+                    ? 'line-through'
+                    : 'none'
+                //add event lisstener
+                node.addEventListener('click', () =>{
+                    store.dispatch(toggleTodoAction(todo.id))
+                })
 
                 //get unordered list, append the new node to it
                 document.getElementById('todos')
