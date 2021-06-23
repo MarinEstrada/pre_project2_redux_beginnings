@@ -3,6 +3,7 @@
 <html>
     <head>
         <title>Udacity Todos Goals</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"></script>
     </head>
     <meta charset= "utf-8"/>
     <body>
@@ -25,47 +26,6 @@
             //helper function to generate id
             function generatedId() {
                 return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36);
-            }
-
-            // Library code
-            function createStore (reducer) {
-                // in charge of the store, which is composed of...4 things
-                // 1. the state
-                // 2. API / way to get the state
-                // 3. way to listen for changes on the state
-                // 4. way to Updaate the state
-
-                //state = in charge of holding the whole state
-                let state
-                let listeners = []
-
-                // in change of getting the whole state
-                const getState = () => state
-
-                //takes listeners array, and pushes the funciton that was called
-                //for the sake of the logs
-                const subscribe = (listener) => {
-                    listeners.push(listener)
-                    //return a function filtering out the original listener if user wants to later unsubscribe
-                    return () => {
-                        listeners = listeners.filter((l) => l !== listener)
-                    }
-                }
-
-                // responsible for updating the state in the actual store
-                const dispatch = (action) => {
-                    state = reducer(state, action)
-                    listeners.forEach((listener) => listener())
-                }
-
-                //whenever createStore is envoked, they will get an object
-                //in order to access the internal state of the store
-                return {
-                    getState,
-                    subscribe,
-                    dispatch,
-                }
-
             }
 
             // App code
@@ -144,19 +104,12 @@
                 }
             }
 
-            // create function that calls each individual reducer for the createStore function
-            function app (state = {}, action) {
-                return {
-                    //prepare todos
-                    todos: todos(state.todos, action),
-                    //prepare goals portion of the state
-                    goals: goals(state.goals, action),
-                }
-            }
-
             // adding starting dispatch code
 
-            const store = createStore(app)
+            const store = Redux.createStore(Redux.combineReducers({
+                todos,
+                goals,
+            }))
 
             store.subscribe(() => {
                 // get goals and todos from state
