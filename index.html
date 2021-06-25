@@ -106,6 +106,23 @@
 
             // adding starting dispatch code
 
+            //after action is dispatched, but before it hits reducer/modifies state
+            function checkAndDispatch (store, action){
+                if(
+                    action.type === ADD_TODO &&
+                    action.todo.name.toLowerCase().includes('bitcoin')
+                ){
+                    return alert("Nope. That's a bad idea.")
+                }else if(
+                    action.type === ADD_GOAL &&
+                    action.goal.name.toLowerCase().includes('bitcoin')
+                ){
+                    return alert("Nope. That's a bad idea.")
+                }
+
+                return store.dispatch(action)
+            }
+
             const store = Redux.createStore(Redux.combineReducers({
                 todos,
                 goals,
@@ -134,7 +151,7 @@
                 input.value = ''
 
                 //call dispatch
-                store.dispatch(addTodoAction({
+                checkAndDispatch(store, addTodoAction({
                     name, //name is the value just aquired in the input field
                     complete: false, // complete set to false by default
                     id: generatedId(), // set id using helper function at top of file
@@ -148,7 +165,7 @@
                 input.value = ''
 
                 //call dispatch
-                store.dispatch(addGoalAction({
+                checkAndDispatch(store, addGoalAction({
                     id: generatedId(), //helper function called
                     name, //name aquired in the input field
                 }))
@@ -178,7 +195,7 @@
 
                 // add remove button & method for removal
                 const removeBtn = createRemoveButton(() => {
-                    store.dispatch(removeTodoAction(todo.id))
+                    checkAndDispatch(store, removeTodoAction(todo.id))
                 })
 
                 // append new textnode to new node
@@ -193,7 +210,7 @@
                     : 'none'
                 //add event lisstener
                 node.addEventListener('click', () =>{
-                    store.dispatch(toggleTodoAction(todo.id))
+                    checkAndDispatch(store, toggleTodoAction(todo.id))
                 })
 
                 //get unordered list, append the new node to it
@@ -206,7 +223,7 @@
                 const text = document.createTextNode(goal.name)
 
                 const removeBtn = createRemoveButton(() => {
-                    store.dispatch(removeGoalAction(goal.id))
+                    checkAndDispatch(store, removeGoalAction(goal.id))
                 })
 
                 node.appendChild(text)
