@@ -106,6 +106,7 @@
 
             // adding starting dispatch code
 
+            //Middleware - Checker
             //after action is dispatched, but before it hits reducer/modifies state
             //next = next middleware if one is there, else=dispatch
             const checker = (store) => (next) => (action) => {
@@ -124,11 +125,22 @@
                 return next(action)
             }
 
+            //Middleware - logger
+            // shows what action is, and what is new state after action is dispatched
+            const logger = (store) => (next) => (action) => {
+                console.group(action.type)
+                    console.log('the action: ', action)
+                    const result = next(action)
+                    console.log('the new state: ', action)
+                console.groupEnd()
+                return result
+            }
+
             // Note, Redux.applyMiddleware is 2nd argument of createStore
             const store = Redux.createStore(Redux.combineReducers({
                 todos,
                 goals,
-            }), Redux.applyMiddleware(checker))
+            }), Redux.applyMiddleware(checker, logger))
 
             store.subscribe(() => {
                 // get goals and todos from state
