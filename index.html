@@ -199,7 +199,16 @@
                 }
 
                 removeItem = (todo) => {
+                    //removes item from UI
                     this.props.store.dispatch(removeTodoAction(todo.id))
+
+                    //need to remove todo item from DB,
+                    return API.deleteTodo(todo.id)
+                        //if failure to remove, add it back in
+                        .catch(() => {
+                            this.props.store.dispatch(addTodoAction(todo))
+                            alert('An error occured! Try again.')
+                        })
                 }
 
                 toggleItem = (id) => {
@@ -240,7 +249,16 @@
                 }
 
                 removeItem = (goal) => {
+                    //removes item from UI
                     this.props.store.dispatch(removeGoalAction(goal.id))
+
+                    //need to remove goal item from DB
+                    return API.deleteGoal(goal.id)
+                        //if failure to delete, add goal back in
+                        .catch(() => {
+                            this.store.dispatch(addGoalAction(goal))
+                            alert('An error occured! Try again.')
+                        })
                 }
 
                 render(){
