@@ -188,14 +188,15 @@
 
                 addItem = (e) => {
                     e.preventDefault()
-                    const name = this.input.value
-                    this.input.value = ''
 
-                    this.props.store.dispatch(addTodoAction({
-                        name, //name is the value just aquired in the input field
-                        complete: false, // complete set to false by default
-                        id: generatedId(), // set id using helper function at top of file
-                    }))
+                    return API.saveTodo(this.input.value)
+                        .then((todo) => {
+                            this.props.store.dispatch(addTodoAction(todo))
+                            this.input.value = ''
+                        })
+                        .catch(() => {
+                            alert('An error occured! Try again.')
+                        })
                 }
 
                 removeItem = (todo) => {
@@ -246,13 +247,15 @@
 
                 addItem = (e) => {
                     e.preventDefault()
-                    const name = this.input.value
-                    this.input.value = ''
 
-                    this.props.store.dispatch(addGoalAction({
-                        id: generatedId(), //helper function called
-                        name, //name aquired in the input field
-                    }))
+                    return API.saveGoal(this.input.value)
+                        .then((goal) => {
+                            this.props.store.dispatch(addGoalAction(goal))
+                            this.input.value = ''
+                        })
+                        .catch(() =>{
+                            alert('An error occured! Try again.')
+                        })
                 }
 
                 removeItem = (goal) => {
