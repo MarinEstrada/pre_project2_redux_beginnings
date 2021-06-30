@@ -77,6 +77,21 @@
                 }
             }
 
+            function handleDeleteTodo(todo){
+                return (dispatch) => {
+                    //removes item from UI
+                    dispatch(removeTodoAction(todo.id))
+
+                    //need to remove todo item from DB,
+                    return API.deleteTodo(todo.id)
+                        //if failure to remove, add it back in
+                        .catch(() => {
+                            dispatch(addTodoAction(todo))
+                            alert('An error occured! Try again.')
+                        })
+                }
+            }
+
             // edit state by adding action
             // this is a reducer funciton
             // reduces request into a brand new state (must be a pure function)
@@ -157,7 +172,7 @@
                 todos,
                 goals,
                 loading,
-            }), Redux.applyMiddleware(checker, logger))
+            }), Redux.applyMiddleware(ReduxThunk.default, checker, logger))
 
         </script>
 
@@ -201,16 +216,7 @@
                 }
 
                 removeItem = (todo) => {
-                    //removes item from UI
-                    this.props.store.dispatch(removeTodoAction(todo.id))
-
-                    //need to remove todo item from DB,
-                    return API.deleteTodo(todo.id)
-                        //if failure to remove, add it back in
-                        .catch(() => {
-                            this.props.store.dispatch(addTodoAction(todo))
-                            alert('An error occured! Try again.')
-                        })
+                    this.props.store.dispatch(handleDeleteTodo(todo))
                 }
 
                 toggleItem = (id) => {
