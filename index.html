@@ -77,6 +77,20 @@
                 }
             }
 
+            function handleAddTodo(name, callback){
+                return (dispatch) => {
+                    return API.saveTodo(name)
+                        .then((todo) => {
+                            dispatch(addTodoAction(todo))
+                            callback()
+                        })
+                        .catch(() => {
+                            alert('An error occured! Try again.')
+                        })
+
+                }
+            }
+
             function handleDeleteTodo(todo){
                 return (dispatch) => {
                     //removes item from UI
@@ -87,6 +101,19 @@
                         //if failure to remove, add it back in
                         .catch(() => {
                             dispatch(addTodoAction(todo))
+                            alert('An error occured! Try again.')
+                        })
+                }
+            }
+
+            function handleToggleTodo(id){
+                return (dispatch) => {
+                    dispatch(toggleTodoAction(id))
+
+                    //update item toggle in the DB
+                    return API.saveTodoToggle(id)
+                        .catch(() => {
+                            dispatch(toggleTodoAction(id))
                             alert('An error occured! Try again.')
                         })
                 }
@@ -234,14 +261,10 @@
                 addItem = (e) => {
                     e.preventDefault()
 
-                    return API.saveTodo(this.input.value)
-                        .then((todo) => {
-                            this.props.store.dispatch(addTodoAction(todo))
-                            this.input.value = ''
-                        })
-                        .catch(() => {
-                            alert('An error occured! Try again.')
-                        })
+                    this.props.store.dispatch(handleAddTodo(
+                        this.input.value,
+                        () => this.input.value = ''
+                    ))
                 }
 
                 removeItem = (todo) => {
@@ -249,14 +272,7 @@
                 }
 
                 toggleItem = (id) => {
-                    this.props.store.dispatch(toggleTodoAction(id))
-
-                    //update item toggle in the DB
-                    return API.saveTodoToggle(id)
-                        .catch(() => {
-                            this.props.store.dispatch(toggleTodoAction(id))
-                            alert('An error occured! Try again.')
-                        })
+                    this.props.store.dispatch(handleToggleTodo(id))
                 }
 
                 render(){
