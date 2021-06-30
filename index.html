@@ -29,6 +29,7 @@
             const TOGGLE_TODO = 'TOGGLE_TODO'
             const ADD_GOAL = 'ADD_GOAL'
             const REMOVE_GOAL = 'REMOVE_GOAL'
+            const RECEIVE_DATA = 'RECEIVE_DATA'
 
             //action creators
 
@@ -67,6 +68,14 @@
                 }
             }
 
+            function receiveDataAction(todos, goals){
+                return{
+                    type: RECEIVE_DATA,
+                    todos,
+                    goals,
+                }
+            }
+
             // edit state by adding action
             // this is a reducer funciton
             // reduces request into a brand new state (must be a pure function)
@@ -80,6 +89,8 @@
                         return state.map((todo) => todo.id === action.id
                             ? Object.assign({}, todo, {complete: !todo.complete} )
                             : todo)
+                    case RECEIVE_DATA:
+                        return action.todos
                     default:
                         return state
                 }
@@ -92,6 +103,8 @@
                         return state.concat([action.goal])
                     case REMOVE_GOAL:
                         return state.filter((goal) => goal.id !== action.id)
+                    case RECEIVE_DATA:
+                        return action.goals
                     default:
                         return state
                 }
@@ -242,6 +255,14 @@
             class App extends React.Component {
                 componentDidMount(){
                     const {store} = this.props
+
+                    //Promise.all() waits until all promises are completed
+                    Promise.all([
+                        API.fetchTodos(),
+                        API.fetchGoals(),
+                    ]).then(([ todos, goals ]) => {
+                        store.dispatch(receiveDataAction(todos, goals))
+                    })
 
                     store.subscribe(() => this.forceUpdate())
                 }
