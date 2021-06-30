@@ -213,6 +213,13 @@
 
                 toggleItem = (id) => {
                     this.props.store.dispatch(toggleTodoAction(id))
+
+                    //update item toggle in the DB
+                    return API.saveTodoToggle(id)
+                        .catch(() => {
+                            this.props.store.dispatch(toggleTodoAction(id))
+                            alert('An error occured! Try again.')
+                        })
                 }
 
                 render(){
