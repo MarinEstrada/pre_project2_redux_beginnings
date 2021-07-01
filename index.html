@@ -77,6 +77,19 @@
                 }
             }
 
+            function handleInitialData(){
+                return (dispatch) => {
+                    //Promise.all() waits until all promises are completed
+                    return Promise.all([
+                        API.fetchTodos(),
+                        API.fetchGoals(),
+                    ]).then(([ todos, goals ]) => {
+                        dispatch(receiveDataAction(todos, goals))
+                    })
+
+                }
+            }
+
             function handleAddTodo(name, callback){
                 return (dispatch) => {
                     return API.saveTodo(name)
@@ -334,13 +347,8 @@
                 componentDidMount(){
                     const {store} = this.props
 
-                    //Promise.all() waits until all promises are completed
-                    Promise.all([
-                        API.fetchTodos(),
-                        API.fetchGoals(),
-                    ]).then(([ todos, goals ]) => {
-                        store.dispatch(receiveDataAction(todos, goals))
-                    })
+                    store.dispatch(handleInitialData())
+
 
                     store.subscribe(() => this.forceUpdate())
                 }
