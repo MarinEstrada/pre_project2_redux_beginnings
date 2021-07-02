@@ -370,8 +370,43 @@
                 }
             }
 
+            //Calling presentational component (app) inside of
+            //conected component (Context.consumer)
+            //This component is responsible for grabbing from Context
+            //for App component
+            class ConnectedApp extends React.Component {
+                render() {
+                    return(
+                        <Context.Consumer>
+                            {(store) => (
+                                <App store={store} />
+                            )}
+                        </Context.Consumer>
+                    )
+                }
+            }
+
+            //createing context object
+            const Context = React.createContext()
+
+            //abstraction of Context.Provider
+            class Provider extends React.Component{
+                render() {
+                    return(
+                        <Context.Provider value={this.props.store}>
+                            {this.props.children}
+                        </Context.Provider>
+                    )
+                }
+            }
+
             ReactDOM.render(
-                <App store={store}/>,
+                //by wrapping app in our Provider method and passing
+                //it the store, we can now grab store in any of our
+                //child compmonents of the App
+                <Provider store={store}>
+                    <ConnectedApp />
+                </Provider>,
                 document.getElementById('app')
             )
         </script>
