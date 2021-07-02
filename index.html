@@ -313,7 +313,7 @@
                 addItem = (e) => {
                     e.preventDefault()
 
-                    this.props.store.dispatch(handleAddGoal(
+                    this.props.dispatch(handleAddGoal(
                         this.input.value,
                         () => this.input.value = ''
                     ))
@@ -321,7 +321,7 @@
                 }
 
                 removeItem = (goal) => {
-                    this.props.store.dispatch(handleDeleteGoal(goal))
+                    this.props.dispatch(handleDeleteGoal(goal))
                 }
 
                 render(){
@@ -343,6 +343,21 @@
                 }
             }
 
+            //Context integration with goals component
+            class ConnectedGoals extends React.Component {
+                render() {
+                    return(
+                        <Context.Consumer>
+                            {(store) => {
+                                const { goals } = store.getState()
+
+                                return <Goals goals={goals} dispatch={store.dispatch} />
+                            }}
+                        </Context.Consumer>
+                    )
+                }
+            }
+
             class App extends React.Component {
                 componentDidMount(){
                     const {store} = this.props
@@ -355,7 +370,7 @@
                 render(){
 
                     const {store} = this.props
-                    const {todos, goals, loading} = store.getState()
+                    const {todos, loading} = store.getState()
 
                     if(loading === true){
                         return <h3>Loading...</h3>
@@ -364,7 +379,7 @@
                     return(
                         <div>
                             <Todos todos={todos} store={store}/>
-                            <Goals goals={goals} store={store}/>
+                            <ConnectedGoals />
                         </div>
                     )
                 }
