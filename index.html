@@ -419,6 +419,54 @@
             //createing context object
             const Context = React.createContext()
 
+            //Abstraction of React componet: Context.Consumer
+            function connect (mapStateToProps) {
+                return (Component) => {
+
+                    //knows when store changes with store.subscribe
+                    //knows what state is needed wiht mapStateToProps
+                    class Receiver extends React.Component {
+                        //check if changed
+                        componentDidMount(){
+                            const { subscribe } = this.props.store
+
+                            //pass function to unsubscribe to listener after
+                            //changes noted and no longer slitening to forceUpdate
+                            this.unsubscribe = subscribe(() =>{
+                                this.forceUpdate()
+                            })
+                        }
+                        //unsubscribe to listener for forceUpdate
+                        componentWillUnmount(){
+                            this.unsubscribe()
+                        }
+                        render() {
+                            const { dispatch, getState } = this.props.store
+                            const state = getState()
+                            const stateNeeded = mapStateToProps(state)
+
+                            return <Component {...stateNeeded} dispatch={dispatch} />
+                        }
+                    }
+
+                    //gets the store from Context
+                    class ConnectedComponent extends React.Component {
+                        render() {
+                            return(
+                                <Context.Consumer>
+                                    {(store) => (
+                                        <Receiver store={store} />
+                                    )}
+                                </Context.Consumer>
+                            )
+                        }
+                    }
+
+                    return ConnectedComponent
+
+                }
+            }
+
             //Abstraction of React component: Context.Provider
             //Takes in store as prop, then sets store context
             //by passing down all subcomponents
