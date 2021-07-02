@@ -419,7 +419,11 @@
             //createing context object
             const Context = React.createContext()
 
-            //abstraction of Context.Provider
+            //Abstraction of React component: Context.Provider
+            //Takes in store as prop, then sets store context
+            //by passing down all subcomponents
+            //All components wrapped by Provider will receive
+            //the store context(ie: sticks store onto context)
             class Provider extends React.Component{
                 render() {
                     return(
