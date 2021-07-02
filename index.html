@@ -308,20 +308,9 @@
                 }
             }
 
-            //React Context integration with todos component
-            class ConnectedTodos extends React.Component {
-                render() {
-                    return(
-                        <Context.Consumer>
-                            {(store) => {
-                                const { todos } = store.getState()
-
-                                return <Todos todos={todos} dispatch={store.dispatch} />
-                            }}
-                        </Context.Consumer>
-                    )
-                }
-            }
+            const ConnectedTodos = connect((state) => ({
+                todos: state.todos
+            }))(Todos)
 
             class Goals extends React.Component {
 
@@ -358,36 +347,20 @@
                 }
             }
 
-            //React Context integration with goals component
-            class ConnectedGoals extends React.Component {
-                render() {
-                    return(
-                        <Context.Consumer>
-                            {(store) => {
-                                const { goals } = store.getState()
-
-                                return <Goals goals={goals} dispatch={store.dispatch} />
-                            }}
-                        </Context.Consumer>
-                    )
-                }
-            }
+            const ConnectedGoals = connect((state) => ({
+                goals: state.goals
+            }))(Goals)
 
             class App extends React.Component {
                 componentDidMount(){
-                    const {store} = this.props
+                    const {dispatch} = this.props
 
-                    store.dispatch(handleInitialData())
+                    dispatch(handleInitialData())
 
-
-                    store.subscribe(() => this.forceUpdate())
                 }
                 render(){
 
-                    const {store} = this.props
-                    const {loading} = store.getState()
-
-                    if(loading === true){
+                    if(this.props.loading === true){
                         return <h3>Loading...</h3>
                     }
 
@@ -400,21 +373,11 @@
                 }
             }
 
-            //Calling presentational component (app) inside of
-            //conected component (Context.consumer)
-            //This component is responsible for grabbing from Context
-            //for App component
-            class ConnectedApp extends React.Component {
-                render() {
-                    return(
-                        <Context.Consumer>
-                            {(store) => (
-                                <App store={store} />
-                            )}
-                        </Context.Consumer>
-                    )
-                }
-            }
+            //new variable to Context.Consumer abstraction: connect
+            // is passed in current state of the store
+            const ConnectedApp = connect((state) => ({
+                loading: state.loading
+            }))(App)//app is the component we need to render
 
             //createing context object
             const Context = React.createContext()
