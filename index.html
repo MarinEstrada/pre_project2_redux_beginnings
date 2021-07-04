@@ -9,6 +9,7 @@
         <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
         <script src="https://tylermcginnis.com/goals-todos-api/index.js"></script>
         <script src="https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js"></script>
+        <script src="https://unpkg.com/react-redux@5.0.6/dist/react-redux.min.js"></script>
     </head>
     <meta charset= "utf-8"/>
     <body>
@@ -274,18 +275,18 @@
                 addItem = (e) => {
                     e.preventDefault()
 
-                    this.props.store.dispatch(handleAddTodo(
+                    this.props.dispatch(handleAddTodo(
                         this.input.value,
                         () => this.input.value = ''
                     ))
                 }
 
                 removeItem = (todo) => {
-                    this.props.store.dispatch(handleDeleteTodo(todo))
+                    this.props.dispatch(handleDeleteTodo(todo))
                 }
 
                 toggleItem = (id) => {
-                    this.props.store.dispatch(handleToggleTodo(id))
+                    this.props.dispatch(handleToggleTodo(id))
                 }
 
                 render(){
@@ -308,12 +309,16 @@
                 }
             }
 
+            const ConnectedTodos = ReactRedux.connect((state) => ({
+                todos: state.todos
+            }))(Todos)
+
             class Goals extends React.Component {
 
                 addItem = (e) => {
                     e.preventDefault()
 
-                    this.props.store.dispatch(handleAddGoal(
+                    this.props.dispatch(handleAddGoal(
                         this.input.value,
                         () => this.input.value = ''
                     ))
@@ -321,7 +326,7 @@
                 }
 
                 removeItem = (goal) => {
-                    this.props.store.dispatch(handleDeleteGoal(goal))
+                    this.props.dispatch(handleDeleteGoal(goal))
                 }
 
                 render(){
@@ -343,35 +348,46 @@
                 }
             }
 
+            const ConnectedGoals = ReactRedux.connect((state) => ({
+                goals: state.goals
+            }))(Goals)
+
             class App extends React.Component {
                 componentDidMount(){
-                    const {store} = this.props
+                    const {dispatch} = this.props
 
-                    store.dispatch(handleInitialData())
+                    dispatch(handleInitialData())
 
-
-                    store.subscribe(() => this.forceUpdate())
                 }
                 render(){
 
-                    const {store} = this.props
-                    const {todos, goals, loading} = store.getState()
-
-                    if(loading === true){
+                    if(this.props.loading === true){
                         return <h3>Loading...</h3>
                     }
 
                     return(
                         <div>
-                            <Todos todos={todos} store={store}/>
-                            <Goals goals={goals} store={store}/>
+                            <ConnectedTodos />
+                            <ConnectedGoals />
                         </div>
                     )
                 }
             }
 
+            //new variable to Context.Consumer abstraction: connect
+            // is passed in current state of the store
+            const ConnectedApp = ReactRedux.connect((state) => ({
+                loading: state.loading
+            }))(App)//app is the component we need to render
+
+
             ReactDOM.render(
-                <App store={store}/>,
+                //by wrapping app in our Provider method and passing
+                //it the store, we can now grab store in any of our
+                //child compmonents of the App
+                <ReactRedux.Provider store={store}>
+                    <ConnectedApp />
+                </ReactRedux.Provider>,
                 document.getElementById('app')
             )
         </script>
